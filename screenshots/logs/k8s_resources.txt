@@ -1,0 +1,29 @@
+$ kubectl -n heart-mlops get deploy,pods,svc,ingress,hpa
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/grafana      1/1     1            1           6m1s
+deployment.apps/heart-api    2/2     2            2           11m
+deployment.apps/prometheus   1/1     1            1           6m1s
+
+NAME                              READY   STATUS    RESTARTS   AGE
+pod/grafana-699b67c88-js6lt       1/1     Running   0          2m37s
+pod/heart-api-854bfd8ffb-m9m6g    1/1     Running   0          7m56s
+pod/heart-api-854bfd8ffb-zkj5l    1/1     Running   0          7m31s
+pod/prometheus-69646b6ff4-hzv8m   1/1     Running   0          6m1s
+
+NAME                 TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+service/grafana      NodePort       10.104.165.88    <none>        3000:30300/TCP   6m1s
+service/heart-api    LoadBalancer   10.103.105.164   <pending>     80:30316/TCP     11m
+service/prometheus   NodePort       10.105.191.9     <none>        9090:30090/TCP   6m1s
+
+NAME                                  CLASS   HOSTS             ADDRESS        PORTS   AGE
+ingress.networking.k8s.io/heart-api   nginx   heart-api.local   192.168.58.2   80      11m
+
+NAME                                            REFERENCE              TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/heart-api   Deployment/heart-api   cpu: 11%/70%   2         4         2          11m
+
+$ kubectl top pods -n heart-mlops
+NAME                          CPU(cores)   MEMORY(bytes)   
+grafana-699b67c88-js6lt       11m          57Mi            
+heart-api-854bfd8ffb-m9m6g    10m          133Mi           
+heart-api-854bfd8ffb-zkj5l    12m          114Mi           
+prometheus-69646b6ff4-hzv8m   6m           34Mi            

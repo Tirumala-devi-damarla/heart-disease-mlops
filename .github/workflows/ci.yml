@@ -1,0 +1,120 @@
+name: CI/CD - heart disease MLOps
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.12"
+  PYTHONPATH: src
+
+jobs:
+  lint:
+    name: Lint (flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install flake8==7.1.1
+      - name: flake8
+        run: flake8 src api tests scripts --statistics --tee --output-file=flake8-report.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flake8-report
+          path: flake8-report.txt
+
+  test:
+    name: Unit tests (pytest)
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: pytest
+        run: pytest -v --junitxml=test-results.xml 2>&1 | tee pytest-log.txt; exit ${PIPESTATUS[0]}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            test-results.xml
+            pytest-log.txt
+
+  train:
+    name: Data + model training
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Download and clean dataset
+        run: bash scripts/download_data.sh --force
+      - name: Train models (MLflow tracking)
+        run: python -m heart.train 2>&1 | tee training-log.txt; exit ${PIPESTATUS[0]}
+      - name: Check model quality gate
+        run: |
+          python - <<'PY'
+          import json, sys
+          m = json.load(open("models/metadata.json"))["metrics"]
+          print(json.dumps(m, indent=2))
+          if m["cv_roc_auc_mean"] < 0.80:
+              sys.exit("Model below quality gate (cv_roc_auc_mean < 0.80)")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trained-model
+          path: |
+            models/
+            reports/training/
+            training-log.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mlruns
+          path: mlruns/
+
+  docker:
+    name: Build + smoke test Docker image
+    needs: train
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: trained-model
+          path: .
+      - name: Build image
+        run: docker build -t heart-api:${{ github.sha }} .
+      - name: Run container and call /predict
+        run: |
+          docker run -d --name heart-api -p 8000:8000 heart-api:${{ github.sha }}
+          for i in $(seq 1 30); do
+            curl -sf localhost:8000/health && break
+            sleep 2
+          done
+          curl -sf -X POST localhost:8000/predict \
+            -H "Content-Type: application/json" \
+            -d @sample_request.json | tee predict-response.json
+          python3 -c "import json; r=json.load(open('predict-response.json')); assert 'confidence' in r"
+      - name: Container logs
+        if: always()
+        run: docker logs heart-api | tee container-logs.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docker-smoke-test
+          path: |
+            predict-response.json
+            container-logs.txt

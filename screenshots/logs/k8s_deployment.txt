@@ -1,0 +1,28 @@
+$ kubectl -n heart-mlops get all,ingress,hpa
+NAME                        READY   UP-TO-DATE   AVAILABLE   AGE     CONTAINERS   IMAGES            SELECTOR
+deployment.apps/heart-api   2/2     2            2           4m53s   heart-api    heart-api:1.0.0   app=heart-api
+
+NAME                             READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+pod/heart-api-854bfd8ffb-m9m6g   1/1     Running   0          70s   10.244.0.9    heart-mlops   <none>           <none>
+pod/heart-api-854bfd8ffb-zkj5l   1/1     Running   0          45s   10.244.0.10   heart-mlops   <none>           <none>
+
+NAME                TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE     SELECTOR
+service/heart-api   LoadBalancer   10.103.105.164   <pending>     80:30316/TCP   4m53s   app=heart-api
+
+NAME                                  CLASS   HOSTS             ADDRESS        PORTS   AGE
+ingress.networking.k8s.io/heart-api   nginx   heart-api.local   192.168.58.2   80      4m52s
+
+NAME                                            REFERENCE              TARGETS              MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/heart-api   Deployment/heart-api   cpu: <unknown>/70%   2         4         2          4m52s
+
+$ minikube -p heart-mlops service heart-api -n heart-mlops --url
+http://127.0.0.1:63453
+
+$ curl http://127.0.0.1:63453/health
+{"status":"ok","model_version":"logistic_regression-c800af5b"}
+
+$ curl -X POST http://127.0.0.1:63453/predict -d @sample_request.json
+{"prediction":1,"label":"heart disease","confidence":0.9934,"probability_disease":0.9934,"risk_level":"high","model_version":"logistic_regression-c800af5b"}
+
+$ curl -H "Host: heart-api.local" http://127.0.0.1:8088/predict  (via NGINX Ingress)
+{"prediction":0,"label":"no heart disease","confidence":0.9683,"probability_disease":0.0317,"risk_level":"low","model_version":"logistic_regression-c800af5b"}

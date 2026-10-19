@@ -1,0 +1,35 @@
+$ flake8 src api tests scripts
+(no lint errors)
+
+$ pytest -v
+tests/test_api.py::test_health PASSED
+tests/test_api.py::test_predict_returns_prediction_and_confidence PASSED
+tests/test_api.py::test_predict_without_optional_fields PASSED
+tests/test_api.py::test_predict_rejects_invalid_input[age--1] PASSED
+tests/test_api.py::test_predict_rejects_invalid_input[cp-9] PASSED
+tests/test_api.py::test_predict_rejects_invalid_input[chol-high] PASSED
+tests/test_api.py::test_predict_rejects_invalid_input[thal-5] PASSED
+tests/test_api.py::test_predict_missing_required_field PASSED
+tests/test_api.py::test_batch_predict PASSED
+tests/test_api.py::test_metrics_endpoint PASSED
+tests/test_api.py::test_service_unavailable_without_model PASSED
+tests/test_data.py::test_clean_removes_duplicates PASSED
+tests/test_data.py::test_clean_fills_missing_values PASSED
+tests/test_data.py::test_target_is_binary PASSED
+tests/test_data.py::test_categorical_columns_are_int PASSED
+tests/test_data.py::test_validate_passes_on_clean_data PASSED
+tests/test_data.py::test_validate_rejects_missing_column PASSED
+tests/test_data.py::test_validate_rejects_bad_values PASSED
+tests/test_data.py::test_load_raw_parses_question_marks PASSED
+tests/test_data.py::test_split_xy PASSED
+tests/test_features.py::test_heart_rate_reserve_value PASSED
+tests/test_features.py::test_preprocessor_output_has_no_nans PASSED
+tests/test_features.py::test_preprocessor_one_hot_and_scaling PASSED
+tests/test_features.py::test_preprocessor_handles_missing_and_unseen PASSED
+tests/test_features.py::test_feature_names PASSED
+tests/test_model.py::test_pipeline_trains_and_predicts[model0] PASSED
+tests/test_model.py::test_pipeline_trains_and_predicts[model1] PASSED
+tests/test_model.py::test_evaluate_returns_all_metrics PASSED
+tests/test_model.py::test_model_roundtrip_with_joblib PASSED
+tests/test_model.py::test_training_main_end_to_end PASSED
+============================= 30 passed in 16.80s ==============================

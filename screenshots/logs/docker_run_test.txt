@@ -1,0 +1,27 @@
+$ docker build -t heart-api:1.0.0 .   (build OK)
+$ docker run -d --name heart-api -p 8080:8000 heart-api:1.0.0
+
+$ docker ps --filter name=heart-api
+NAMES       IMAGE             STATUS                   PORTS
+heart-api   heart-api:1.0.0   Up 6 seconds (healthy)   0.0.0.0:8080->8000/tcp, [::]:8080->8000/tcp
+
+$ curl localhost:8080/health
+{"status":"ok","model_version":"logistic_regression-c800af5b"}
+
+$ curl -X POST localhost:8080/predict -H "Content-Type: application/json" -d @sample_request.json
+{"prediction":1,"label":"heart disease","confidence":0.9934,"probability_disease":0.9934,"risk_level":"high","model_version":"logistic_regression-c800af5b"}
+
+$ docker logs heart-api
+/usr/local/lib/python3.12/site-packages/pydantic/_internal/_fields.py:132: UserWarning: Field "model_version" in PredictionResponse has conflict with protected namespace "model_".
+
+You may be able to resolve this warning by setting `model_config['protected_namespaces'] = ()`.
+  warnings.warn(
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+{"ts": "2026-10-19T18:24:05", "level": "INFO", "logger": "heart_api", "msg": "Model loaded from /app/models/model.joblib (logistic_regression)"}
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+{"ts": "2026-10-19T18:24:08", "level": "INFO", "logger": "heart_api", "msg": "request", "request_id": "411413170055", "method": "GET", "path": "/health", "status": 200, "latency_ms": 10.26, "client": "127.0.0.1"}
+{"ts": "2026-10-19T18:24:09", "level": "INFO", "logger": "heart_api", "msg": "request", "request_id": "b75493ce8dfd", "method": "GET", "path": "/health", "status": 200, "latency_ms": 0.64, "client": "192.168.65.1"}
+{"ts": "2026-10-19T18:24:09", "level": "INFO", "logger": "heart_api", "msg": "prediction", "input": {"age": 58.0, "sex": 1, "cp": 4, "trestbps": 140.0, "chol": 260.0, "fbs": 0, "restecg": 2, "thalach": 130.0, "exang": 1, "oldpeak": 2.4, "slope": 2, "ca": 2, "thal": 7}, "output": {"prediction": 1, "label": "heart disease", "confidence": 0.9934, "probability_disease": 0.9934, "risk_level": "high", "model_version": "logistic_regression-c800af5b"}}
+{"ts": "2026-10-19T18:24:09", "level": "INFO", "logger": "heart_api", "msg": "request", "request_id": "d0877ee5f34b", "method": "POST", "path": "/predict", "status": 200, "latency_ms": 38.41, "client": "192.168.65.1"}
