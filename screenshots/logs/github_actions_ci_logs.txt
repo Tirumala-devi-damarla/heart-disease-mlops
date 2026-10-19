@@ -1,4 +1,4 @@
-$ gh run view 39309209180 --job 118254864461 --log   (Data + model training, filtered)
+$ gh run view 39311314832 --job 118262061644 --log   (Data + model training, filtered)
 Download and clean dataset | Raw shape: (303, 14), missing values:
 Download and clean dataset | Filling 4 missing values in ca with 0.0
 Download and clean dataset | Filling 2 missing values in thal with 3.0
@@ -10,14 +10,14 @@ Train models (MLflow tracking) | Exported logistic_regression to /home/runner/wo
 Check model quality gate |   "cv_roc_auc_mean": 0.9075,
 Check model quality gate |   "test_roc_auc": 0.96
 
-$ gh api repos/Tirumala-devi-damarla/heart-disease-mlops/actions/runs/39309209180/artifacts
-  trained-model  (331856 bytes)
-  docker-smoke-test  (827 bytes)
-  mlruns  (551284 bytes)
-  test-results  (3280 bytes)
+$ gh api repos/Tirumala-devi-damarla/heart-disease-mlops/actions/runs/39311314832/artifacts
+  docker-smoke-test  (825 bytes)
+  mlruns  (551369 bytes)
+  test-results  (3265 bytes)
   flake8-report  (150 bytes)
+  trained-model  (331855 bytes)
 
-$ gh run view 39309209180 --job 118255488540 --log   (Docker smoke test, filtered)
-Build image | #14 naming to docker.io/library/heart-api:cbc1a3e38d5e9b9d4bc35c8c4fba0df4bf3cd3ec done
-Run container and call /predict | {"status":"ok","model_version":"logistic_regression-0809e153"}{"prediction":1,"label":"heart disease","con
-Container logs | {"ts": "2026-10-19T19:17:12", "level": "INFO", "logger": "heart_api", "msg": "prediction", "input": {"age": 58.0, "sex": 1,
+$ gh run view 39311314832 --job 118262762167 --log   (Docker smoke test, filtered)
+Build image | #14 naming to docker.io/library/heart-api:b4fad05fbbdc434aba36f05a1cd8f8ea9ff3ee28 done
+Run container and call /predict | {"status":"ok","model_version":"logistic_regression-0eecc1d8"}{"prediction":1,"label":"heart disease","con
+Container logs | {"ts": "2026-10-19T19:32:24", "level": "INFO", "logger": "heart_api", "msg": "prediction", "input": {"age": 58.0, "sex": 1,

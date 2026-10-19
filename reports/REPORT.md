@@ -226,11 +226,11 @@ Because every job `needs` the previous one, a lint error, a failing test or a ba
 pipeline with a red build and clear logs (`tee` + `exit ${PIPESTATUS[0]}` keeps the real exit
 code while still saving the log).
 
-The latest run on GitHub (run #3, triggered by a push to `main`) passed all four jobs in about
-3.5 minutes and produced 5 artifacts. On the fresh Ubuntu runner the selected model reached exactly
+The run on GitHub (run #1, triggered by a push to `main`) passed all four jobs in under
+4 minutes and produced 5 artifacts. On the fresh Ubuntu runner the selected model reached exactly
 the same CV ROC-AUC (0.9075) as locally, which is another check that the pipeline is reproducible.
 
-![GitHub Actions run #3 - all four jobs passed](../screenshots/02_github_actions_run.png){width=78%}
+![GitHub Actions run #1 - all four jobs passed](../screenshots/02_github_actions_run.png){width=78%}
 
 ![Steps of the training job](../screenshots/03_github_actions_training_job.png){width=62%}
 
