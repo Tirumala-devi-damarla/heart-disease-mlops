@@ -42,7 +42,7 @@ docker build -t heart-api:1.0.0 .        # serving image
 
 Two requirement files are used: `requirements.txt` (everything for development, training and
 tests, all versions pinned) and `requirements-serve.txt` (only what the API needs), which keeps the
-Docker image smaller. The full command list for Docker, Kubernetes and monitoring is in `README.md`.
+Docker image smaller. The full command list for Docker, Kubernetes and monitoring is in `RUN_INSTRUCTIONS.md`.
 
 # 3. Data acquisition and preprocessing
 
