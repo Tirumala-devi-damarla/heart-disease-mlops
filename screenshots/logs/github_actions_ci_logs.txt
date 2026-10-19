@@ -1,0 +1,23 @@
+$ gh run view 39306950279 --job 118247090137 --log   (Data + model training, filtered)
+Download and clean dataset | Raw shape: (303, 14), missing values:
+Download and clean dataset | Filling 4 missing values in ca with 0.0
+Download and clean dataset | Filling 2 missing values in thal with 3.0
+Download and clean dataset | Class balance: [164, 139]
+Train models (MLflow tracking) | logistic_regression  cv_roc_auc=0.9075 test_roc_auc=0.9600 best={'model__C': 0.5, 'model__penalty': 'l2'}
+Train models (MLflow tracking) | random_forest        cv_roc_auc=0.8968 test_roc_auc=0.9578 best={'model__max_depth': 5, 'model__min_samples
+Train models (MLflow tracking) | gradient_boosting    cv_roc_auc=0.8743 test_roc_auc=0.9589 best={'model__learning_rate': 0.05, 'model__max_
+Train models (MLflow tracking) | Exported logistic_regression to /home/runner/work/heart-disease-mlops/heart-disease-mlops/models/model.jobl
+Check model quality gate |   "cv_roc_auc_mean": 0.9075,
+Check model quality gate |   "test_roc_auc": 0.96
+
+$ gh api repos/Tirumala-devi-damarla/heart-disease-mlops/actions/runs/39306950279/artifacts
+  docker-smoke-test  (831 bytes)
+  trained-model  (331849 bytes)
+  test-results  (3275 bytes)
+  flake8-report  (150 bytes)
+  mlruns  (551377 bytes)
+
+$ gh run view 39306950279 --job 118247529542 --log   (Docker smoke test, filtered)
+Build image | #14 naming to docker.io/library/heart-api:771141c5b3a2f54cb9fafeb9c2e2a6ab7a312318 done
+Run container and call /predict | {"status":"ok","model_version":"logistic_regression-8d6fc7fe"}{"prediction":1,"label":"heart disease","con
+Container logs | {"ts": "2026-10-19T19:00:54", "level": "INFO", "logger": "heart_api", "msg": "prediction", "input": {"age": 58.0, "sex": 1,

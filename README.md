@@ -1,5 +1,7 @@
 # Heart Disease Risk Prediction - End-to-End MLOps
 
+[![CI/CD](https://github.com/Tirumala-devi-damarla/heart-disease-mlops/actions/workflows/ci.yml/badge.svg)](https://github.com/Tirumala-devi-damarla/heart-disease-mlops/actions/workflows/ci.yml)
+
 MLOps Assignment 1 (AIMLCZG523). A classifier that predicts heart disease from patient data (UCI
 Heart Disease, Cleveland subset), with experiment tracking, CI/CD, Docker, Kubernetes and monitoring.
 
@@ -46,6 +48,8 @@ heart-disease-mlops/
 Requires Python 3.12, Docker, and (for deployment) minikube + kubectl.
 
 ```bash
+git clone https://github.com/Tirumala-devi-damarla/heart-disease-mlops.git
+cd heart-disease-mlops
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt

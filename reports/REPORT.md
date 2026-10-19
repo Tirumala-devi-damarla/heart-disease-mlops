@@ -7,7 +7,7 @@ subtitle: "Machine Learning Operations (AIMLCZG523) - Assignment 1"
 |---|---|
 | **Student name** | _<your name>_ |
 | **BITS ID** | _<your ID>_ |
-| **Code repository** | _<GitHub repository URL>_ |
+| **Code repository** | https://github.com/Tirumala-devi-damarla/heart-disease-mlops |
 | **Demo video** | _<video link>_ |
 | **API access** | Local Kubernetes (minikube) - see Section 9.3 |
 
@@ -30,7 +30,7 @@ GitHub Actions, Docker, minikube (Kubernetes v1.37), NGINX Ingress, Prometheus a
 # 2. Setup and installation
 
 ```bash
-git clone <repository-url> && cd heart-disease-mlops
+git clone https://github.com/Tirumala-devi-damarla/heart-disease-mlops.git && cd heart-disease-mlops
 python3.12 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 bash scripts/download_data.sh            # data
@@ -226,9 +226,15 @@ Because every job `needs` the previous one, a lint error, a failing test or a ba
 pipeline with a red build and clear logs (`tee` + `exit ${PIPESTATUS[0]}` keeps the real exit
 code while still saving the log).
 
-_<Insert screenshot: GitHub Actions run with all four jobs green - `screenshots/02_github_actions_run.png`>_
+The first run on GitHub (run #1, triggered by the initial push) passed all four jobs in about
+3 minutes and produced 5 artifacts. On the fresh Ubuntu runner the selected model reached exactly
+the same CV ROC-AUC (0.9075) as locally, which is another check that the pipeline is reproducible.
 
-_<Insert screenshot: artifacts of the run - `screenshots/03_github_actions_artifacts.png`>_
+![GitHub Actions run #1 - all four jobs passed](../screenshots/02_github_actions_run.png){width=78%}
+
+![Steps of the training job](../screenshots/03_github_actions_training_job.png){width=62%}
+
+![CI logs (training, quality gate, Docker smoke test) and the uploaded artifacts](../screenshots/04_github_actions_logs_artifacts.png){width=95%}
 
 # 9. Containerisation and deployment
 
